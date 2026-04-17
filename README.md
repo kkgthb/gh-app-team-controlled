@@ -95,7 +95,7 @@ By the way, once you have the GitHub App stuff in place, RepoA's invocation of `
   uses: "actions/create-github-app-token@v1"
   with:
     app-id: ${app_id}
-    private-key: $${{ secrets.ORG_SECRET_NAME_HERE }} # This GitHub Actions secret's value contains the long-lived private key for "becoming" an org-wide GitHub App that the company has chosen to only install into RepoB.  A great approach that can help support granular least privilege authorization grants against RepoB.
+    private-key: $${{ secrets.ORG_SCOPED_SECRET_NAME_HERE }} # This GitHub Actions secret's value contains the long-lived private key for "becoming" an org-wide GitHub App that the company has chosen to only install into RepoB.  A great approach that can help support granular least privilege authorization grants against RepoB.
     repositories: ${repo_b_name}
     owner: ${gh_org_name}
 
@@ -115,5 +115,5 @@ Instead of, say, with a direct repo-level SSH key providing control over RepoB, 
   uses: "actions/checkout@v6"
   with:
     repository: ${gh_org_name}/${repo_b_name}
-    ssh-key: $${{ secrets.REPO_SECRET_NAME_HERE }} # This GitHub Actions secret's value contains a long-lived direct RepoB private key, whose privilege grants are probably horrifyingly overscoped, especially if write access is needed (due to GitHub.com not offering granular authorization grant scoping for repo SSH keys).  Please do not use this approach.
+    ssh-key: $${{ secrets.REPO_SCOPED_SECRET_NAME_HERE }} # This GitHub Actions secret's value contains a long-lived direct RepoB private key, whose privilege grants are probably horrifyingly overscoped, especially if write access is needed (due to GitHub.com not offering granular authorization grant scoping for repo SSH keys).  Please do not use this approach.
 ```
