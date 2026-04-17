@@ -1,3 +1,7 @@
+# GitHub Actions - how to read Repo B from Repo A
+
+## Problem
+
 Getting a GitHub Actions workflow attached to Repo A to read from or write to, Repo B, is a real pain.
 
 This is me working out the kinks of all of the config required to make it happen.
@@ -6,11 +10,13 @@ This is me working out the kinks of all of the config required to make it happen
 
 ---
 
+## Manual flow I am attempting to replace
+
 Here's the idea of the manual steps it could potentially replace walking admins through:
 
 > I would like to request the following configuration changes to the "COMPANY_ORG_NAME" GitHub Enterprise Cloud organization.
 >
-> ## CONFIG 1 OF 4:  a new org-wide GitHub App
+> ### CONFIG 1 OF 4:  a new org-wide GitHub App
 > 
 > For naming inspiration, please see an unrelated but similar-idea existing GitHub App that has been installed into a repository called "repoY."  I believe it should show up under `https://github.com/COMPANY_ORG_NAME/repoY/settings/installations`.  And then you should be able to see additional details about the app itself by finding and clicking it within the list available at `https://github.com/organizations/COMPANY_ORG_NAME/settings/apps/`.
 > 
@@ -31,7 +37,7 @@ Here's the idea of the manual steps it could potentially replace walking admins 
 > 
 > Note:  As soon as you click "Create GitHub App" above, you will be redirected to the settings page for the app you just created.  It will have a URL something like `https://github.com/organizations/COMPANY_ORG_NAME/settings/apps/SOME_VALUE_HERE`.  At the top of the page, there will be a yellow-background toast alert reading "Registration successful.  You must generate a private key in order to install your GitHub App."  You can ignore that for now, it's not true, within a single organization.  You can come back to it later, because it's a bit finicky and it's good to be dedicated to the task.
 > 
-> ## CONFIG 2 OF 4:  install the new GitHub App into a specific repository within the "COMPANY_ORG_NAME" org
+> ### CONFIG 2 OF 4:  install the new GitHub App into a specific repository within the "COMPANY_ORG_NAME" org
 > 
 > In the left nav-menu of the new GitHub App's settings page, there is an "Install App" option.  It leads to 
 `https://github.com/organizations/COMPANY_ORG_NAME/settings/apps/SOME_VALUE_HERE/installations`.  Click it.
@@ -47,7 +53,7 @@ Here's the idea of the manual steps it could potentially replace walking admins 
 > This will redirect you to a URL of the format `https://github.com/organizations/COMPANY_ORG_NAME/settings/installations/SOME_INTEGER_HERE`.  You will never need to look at it again unless you need to tear down this whole GitHub App.  In which case, you can easily find it and uninstall it at a later date from `https://github.com/organizations/COMPANY_ORG_NAME/settings/installations/`.
 > 
 > 
-> ## CONFIG 3 OF 4:  generate a private key for "becoming" the GitHub App
+> ### CONFIG 3 OF 4:  generate a private key for "becoming" the GitHub App
 > 
 > Back in the new GitHub App's settings page, the yellow toast has probably disappeared.  That's okay -- the "generate a private key" link just jumped down the page to `https://github.com/organizations/COMPANY_ORG_NAME/settings/apps/SOME_VALUE_HERE#private-key`, which you can reach by simply scrolling down the GitHub App's settings page until you reach the "Generate a private key" section.
 > 
@@ -59,7 +65,7 @@ Here's the idea of the manual steps it could potentially replace walking admins 
 > 
 > Note:  the "Generate a private key" button will remain in this part of the GitHub App's settings page, though it will be less prominent and will be placed above the list of existing private keys attached to the GitHub App.  If you ever need to "rotate" a compromised private key, you will more or less start over in this "CONFIG 3 of 4" part of the process as if you had never generated one in the first place, and when you have put the new `.pem` file's value where it belongs toward the end of all of these "config" steps, it will be safe to click the "DELETE" button to the right of the old compromised key (as found in the GitHub App's settings page's list of attached private keys).
 > 
-> ## CONFIG 4 OF 4:  create a new org-wide GitHub Actions Secret and allow the client repo to see its value
+> ### CONFIG 4 OF 4:  create a new org-wide GitHub Actions Secret and allow the client repo to see its value
 > 
 > Go to `https://github.com/organizations/COMPANY_ORG_NAME/settings/secrets/actions/new` to create a new org-wide GitHub Actions Secret.
 > 
@@ -71,13 +77,15 @@ Here's the idea of the manual steps it could potentially replace walking admins 
 > 
 > Proceed to the validation step below
 > 
-> ## VALIDATION STEP:  check if the config works
+> ### VALIDATION STEP:  check if the config works
 > 
 > Before deleting the `.pem` file off of your hard drive, please partner with me _(the opener of this request)_ to validate whether the config works.
 > 
 > Sometimes, the copy-paste goes wonky and a bit of hands-on troubleshooting is necessary.
 
 ---
+
+## Workflow refactor needed
 
 By the way, once you have the GitHub App stuff in place, RepoA's invocation of `actions/checkout` needs to change a bit to be a 2-step flow that first runs `actions/create-github-app-token`, and that uses `token` in `checkout`:
 
